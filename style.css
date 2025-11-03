@@ -1,0 +1,165 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  color: #eee;
+  text-align: center;
+
+  /* 🌌 Background kombinasi gradasi & gambar */
+ background: 
+  linear-gradient(rgba(10, 20, 40, 0.5), rgba(10, 20, 40, 0.6)), 
+  url('octa.jpg'); /* Ganti nama file sesuai gambar kamu */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* efek parallax */
+  background-blend-mode: overlay;
+
+}
+
+/* ===== HEADER ===== */
+header.site-header {
+  background: rgba(27, 42, 58, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  text-align: left;
+  backdrop-filter: blur(4px);
+}
+
+.logo-img {
+  width: 60px;
+  border-radius: 8px;
+}
+
+.brand-text h1 {
+  margin: 0;
+  color: #9fd4ff;
+}
+
+nav {
+  text-align: right;
+}
+
+nav a {
+  color: #ccc;
+  margin: 0 10px;
+  text-decoration: none;
+  transition: color 0.3s, border-bottom 0.3s;
+}
+
+nav a:hover {
+  color: #00b7ff;
+}
+
+nav a.active {
+  color: #00b7ff;
+  border-bottom: 2px solid #00b7ff;
+}
+
+/* ===== KONTEN UTAMA ===== */
+.container {
+  padding: 40px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  width: 150px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ======== GUILD INFO SECTION ======== */
+.guild-info {
+  background: rgba(20, 35, 55, 0.6);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.guild-banner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.guild-flag {
+  width: 80px;
+  border-radius: 10px;
+}
+
+.guild-title h2 {
+  color: #87cefa;
+  margin-bottom: 8px;
+}
+
+.guild-title .motto {
+  color: #c7d9f0;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.guild-stats {
+  margin: 20px 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  text-align: center;
+}
+
+/* ======== BIO SECTION ======== */
+.bio-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.bio-card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.bio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+
+.bio-card img {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: rgba(20, 34, 48, 0.95);
+  color: #aaa;
+  margin-top: 50px;
+  backdrop-filter: blur(3px);
+}
