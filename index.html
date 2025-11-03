@@ -39,11 +39,23 @@
         <div><strong>Guild Leader:</strong> KPKTOTO</div>
         <div><strong>Territory:</strong> 185</div>
         <div><strong>Guild Level:</strong> 17</div>
-        <div><strong>Members:</strong> 118/ 120</div>
+        <div><strong>Members:</strong> 118 / 120</div>
       </div>
     </section>
   </main>
 
   <footer>© 2025 Octa Fate War Guild</footer>
+
+  <script src="auth.js"></script>
+  <script>
+    // Gunakan sistem login R4 yang sama seperti di auth.js
+    const menu = document.getElementById('r4Menu');
+
+    if (isR4LoggedIn()) {
+      menu.innerHTML = `<button onclick="logoutR4()">Logout (R4)</button>`;
+    } else {
+      menu.innerHTML = `<a href="login.html">Login R4</a>`;
+    }
+  </script>
 </body>
 </html>
