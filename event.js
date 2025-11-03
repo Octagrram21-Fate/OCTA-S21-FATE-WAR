@@ -1,18 +1,28 @@
-// ==== SETUP JSONBIN ====
+// ==================== KONFIGURASI JSONBIN ====================
 const BIN_ID = "6908b0acae596e708f41ae1a"; 
 const API_KEY = "$2a$10$MtQAS8YauDJ2XJS6jN5l1uKIV6OOXpkOIVGnwuULjrRjKuSJPyJry"; 
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-// ==== ELEMENT HTML ====
+// ==================== ELEMENT ====================
 const form = document.getElementById('eventForm');
 const list = document.getElementById('eventList');
 
-// Saat halaman dibuka, muat event dari JSONBin
+// ==================== CEK LOGIN R4 ====================
+function isR4LoggedIn() {
+  return localStorage.getItem("isR4") === "true";
+}
+
+// ==================== LOAD EVENT ====================
 document.addEventListener('DOMContentLoaded', loadEvents);
 
-// Saat form disubmit
+// ==================== TAMBAH EVENT (HANYA R4) ====================
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
+
+  if (!isR4LoggedIn()) {
+    alert("⚠️ Hanya R4 yang bisa menambah event!");
+    return;
+  }
 
   const name = document.getElementById('eventName').value.trim();
   const date = document.getElementById('eventDate').value;
@@ -20,26 +30,22 @@ form.addEventListener('submit', async function (e) {
 
   if (!name || !date || !time) return;
 
-  const localDateTime = new Date(`${date}T${time}`);
-  const utcString = localDateTime.toUTCString();
-
-  const eventData = {
-    id: Date.now(), // ID unik biar bisa dihapus spesifik
+  const newEvent = {
+    id: Date.now(),
     name,
     date,
-    time,
-    utcString
+    time
   };
 
   try {
-    // Ambil data lama
     const res = await fetch(API_URL, { headers: { "X-Master-Key": API_KEY } });
     const data = await res.json();
 
-    // Tambah event baru
-    data.record.guildEvents.push(eventData);
+    // jika belum ada array guildEvents, buat
+    if (!data.record.guildEvents) data.record.guildEvents = [];
 
-    // Simpan kembali ke JSONBin
+    data.record.guildEvents.push(newEvent);
+
     await fetch(API_URL, {
       method: "PUT",
       headers: {
@@ -49,61 +55,64 @@ form.addEventListener('submit', async function (e) {
       body: JSON.stringify(data.record)
     });
 
-    addEventCard(eventData);
+    addEventCard(newEvent);
     form.reset();
-  } catch (error) {
-    console.error("Gagal menyimpan ke JSONBin:", error);
-    alert("❌ Gagal menyimpan data. Cek koneksi atau API Key kamu.");
+  } catch (err) {
+    alert("❌ Gagal menyimpan ke JSONBin.");
+    console.error(err);
   }
 });
 
-// ====== FUNGSI ======
-
-// Muat event dari JSONBin
+// ==================== MUAT DATA DARI JSONBIN ====================
 async function loadEvents() {
   try {
     const res = await fetch(API_URL, { headers: { "X-Master-Key": API_KEY } });
     const data = await res.json();
     list.innerHTML = "";
+
+    if (!data.record.guildEvents || data.record.guildEvents.length === 0) {
+      list.innerHTML = "<p>📭 Belum ada event.</p>";
+      return;
+    }
+
     data.record.guildEvents.forEach(addEventCard);
   } catch (err) {
-    console.error("Gagal memuat data:", err);
-    list.innerHTML = "<p style='color:red;'>⚠️ Gagal memuat event. Cek API Key / BIN ID.</p>";
+    list.innerHTML = "<p style='color:red;'>⚠️ Gagal memuat data dari JSONBin.</p>";
+    console.error(err);
   }
 }
 
-// Tambahkan 1 kartu event
-function addEventCard(event) {
+// ==================== TAMPILKAN SATU EVENT ====================
+function addEventCard(ev) {
   const card = document.createElement('div');
   card.className = 'card';
-  card.dataset.id = event.id;
-
   card.innerHTML = `
-    <h3>${event.name}</h3>
-    <p><strong>Tanggal:</strong> ${event.date}</p>
-    <p><strong>Jam:</strong> ${event.time}</p>
-    <small>${event.utcString}</small>
-    <button class="delete-btn">🗑 Hapus</button>
+    <h3>${ev.name}</h3>
+    <p><strong>Tanggal:</strong> ${ev.date}</p>
+    <p><strong>Jam:</strong> ${ev.time}</p>
+    ${isR4LoggedIn() ? `<button onclick="deleteEvent(${ev.id})">🗑️ Hapus</button>` : ""}
   `;
-
-  const delBtn = card.querySelector('.delete-btn');
-  delBtn.addEventListener('click', () => deleteEvent(event.id));
-
   list.appendChild(card);
 }
 
-// Fungsi hapus event dari JSONBin
+// ==================== HAPUS EVENT (HANYA R4) ====================
 async function deleteEvent(id) {
-  if (!confirm("Yakin ingin hapus event ini?")) return;
+  if (!isR4LoggedIn()) {
+    alert("⚠️ Hanya R4 yang bisa menghapus event!");
+    return;
+  }
+
+  if (!confirm("Yakin ingin menghapus event ini?")) return;
 
   try {
     const res = await fetch(API_URL, { headers: { "X-Master-Key": API_KEY } });
     const data = await res.json();
 
-    // Filter event yg tidak dihapus
-    data.record.guildEvents = data.record.guildEvents.filter(ev => ev.id !== id);
+    if (!data.record.guildEvents) return;
 
-    // Update ke JSONBin
+    const updatedEvents = data.record.guildEvents.filter(ev => ev.id !== id);
+    data.record.guildEvents = updatedEvents;
+
     await fetch(API_URL, {
       method: "PUT",
       headers: {
@@ -113,12 +122,9 @@ async function deleteEvent(id) {
       body: JSON.stringify(data.record)
     });
 
-    // Hapus dari tampilan
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if (card) card.remove();
-
-  } catch (error) {
-    console.error("Gagal hapus data:", error);
-    alert("❌ Gagal hapus data dari server.");
+    loadEvents(); // refresh daftar
+  } catch (err) {
+    alert("❌ Gagal menghapus event dari JSONBin.");
+    console.error(err);
   }
 }
