@@ -8,27 +8,28 @@
 </head>
 <body>
   <header class="site-header">
+    <!-- Menu kiri -->
     <nav>
-      <a href="index.html">Home</a>
-      <a href="events.html" class="active">Events</a>
+      <a href="index.html" class="active">Home</a>
+      <a href="events.html">Events</a>
       <a href="finance.html">Gold History</a>
       <a href="heroes.html">Hero Guides</a>
       <a href="office.html">Octa Office</a>
     </nav>
+
+    <!-- Login kanan -->
+    <div id="loginSection" class="r4-login">
+      <img src="r4-user.png" alt="R4 User" class="r4-avatar">
+      <input type="text" id="username" placeholder="Username R4">
+      <input type="password" id="password" placeholder="Password">
+      <button id="loginBtn">Login</button>
+    </div>
   </header>
 
   <main class="container">
     <h2>Guild Events</h2>
 
-    <!-- Login untuk R4 -->
-    <div id="loginSection">
-      <h3>🔒 Login R4</h3>
-      <input type="text" id="username" placeholder="Username R4"><br>
-      <input type="password" id="password" placeholder="Password"><br>
-      <button id="loginBtn">Login</button>
-    </div>
-
-    <!-- Form Tambah Event (Hanya R4) -->
+    <!-- Form hanya untuk R4 -->
     <div id="r4Section" style="display:none;">
       <form id="eventForm">
         <input type="text" id="eventName" placeholder="Nama Event" required>
@@ -39,7 +40,6 @@
       <button id="logoutBtn" style="margin-top:10px;">Logout</button>
     </div>
 
-    <!-- Daftar event publik -->
     <h3 style="margin-top:30px;">📅 Daftar Event Guild</h3>
     <div class="cards" id="eventList"></div>
   </main>
