@@ -1,0 +1,363 @@
+:root {
+  --bg: #07111a;
+  --panel: #0b1720;
+  --muted: #8a99a6;
+  --accent: #ffd966;
+  --danger: #ff6b6b;
+  --success: #32d583;
+}
+
+/* ====== RESET DAN DASAR ====== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, #03121a 0%, #07111a 100%);
+  color: #e6eef6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ====== NAVIGASI ====== */
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-right: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.site-nav a.active {
+  color: var(--accent);
+  font-weight: 700;
+  background: rgba(255, 217, 102, 0.06);
+}
+
+/* ===== LOGIN DI KANAN ATAS ===== */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.login-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  padding: 4px 8px;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+}
+
+.login-top input {
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.2);
+  color: #fff;
+  font-size: 12px;
+}
+
+.login-top .btn.small {
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #07121a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.login-top .btn.small:hover {
+  transform: translateY(-1px);
+  background: #ffe680;
+}
+
+.login-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+/* ====== HEADER ====== */
+.page-header {
+  text-align: center;
+  font-weight: 800;
+  font-size: 18px;
+  margin: 18px 0;
+  color: var(--accent);
+}
+
+/* ====== LAYOUT UTAMA ====== */
+.main {
+  max-width: 1100px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* ====== LOGIN CARD (versi tengah, opsional) ====== */
+.auth-card {
+  max-width: 520px;
+  margin: 14px auto;
+  text-align: center;
+}
+
+.auth-card input {
+  width: 70%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: transparent;
+  color: #e6eef6;
+  margin: 8px 0;
+}
+
+.auth-card .auth-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ====== TOOLS ====== */
+.tools {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tools .left,
+.tools .right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tools input,
+.tools select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: transparent;
+  color: #e6eef6;
+  min-width: 180px;
+}
+
+/* ====== BUTTON ====== */
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: rgba(255,255,255,0.03);
+  color: #e6eef6;
+  transition: 0.15s;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: #07121a;
+  font-weight: 700;
+}
+
+.btn.warn {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* ====== TABEL ====== */
+.table-card { overflow: auto; }
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.tbl thead tr { background: rgba(255,255,255,0.03); }
+
+.tbl th, .tbl td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  color: #e6eef6;
+  text-align: left;
+  font-size: 14px;
+}
+
+.tbl th {
+  color: var(--accent);
+  font-weight: 700;
+  text-align: center;
+}
+
+.tbl tbody tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+.tbl tbody tr:hover { background: rgba(255,255,255,0.02); }
+.tbl td.center { text-align: center; }
+
+/* ====== FOOTER ====== */
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  padding: 14px;
+  margin-top: 20px;
+}
+
+/* ====== MODAL PREVIEW ====== */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2,6,23,0.6);
+  z-index: 50;
+}
+
+.modal[aria-hidden="false"] { display: flex; }
+
+.modal-content {
+  background: #fff;
+  color: #072024;
+  width: min(95%, 1000px);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+}
+
+.preview-wrap {
+  max-height: 400px;
+  overflow: auto;
+  margin-top: 12px;
+  border: 1px solid #e6eef6;
+  padding: 8px;
+  background: #fff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.error {
+  color: #ff8b8b;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* ====== TABLE DALAM PREVIEW ====== */
+.preview-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.preview-wrap th,
+.preview-wrap td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.preview-wrap tr.invalid {
+  background: #ffecec;
+  color: #5a1b1b;
+}
+
+/* ====== INPUT MANUAL R4 STYLE ====== */
+#manualInputBox {
+  background: #1a1a1a;
+  color: #f0c94d;
+  padding: 15px 20px;
+  border: 2px solid #f0c94d;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(240, 201, 77, 0.3);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.manual-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.manual-form label {
+  font-weight: bold;
+}
+
+.manual-form input,
+.manual-form select {
+  background: #111;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.manual-form input:focus,
+.manual-form select:focus {
+  outline: none;
+  border-color: #f0c94d;
+  box-shadow: 0 0 5px #f0c94d;
+}
+
+.manual-form button {
+  margin-top: 10px;
+  background: #f0c94d;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.manual-form button:hover {
+  background: #ffe680;
+  transform: scale(1.03);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 760px) {
+  .tools .left,
+  .tools .right {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tbl { min-width: 600px; }
+
+  .login-top {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

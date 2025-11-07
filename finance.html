@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gold History — Octa Fate War</title>
+
+  <link rel="stylesheet" href="finance.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="site-nav">
+    <div class="nav-left">
+      <a href="index.html">Home</a>
+      <a href="events.html">Events</a>
+      <a href="finance.html" class="active">Gold History</a>
+      <a href="heroes.html">Hero Guides</a>
+      <a href="office.html">Octa Office</a>
+    </div>
+
+    <div class="nav-right">
+      <span id="currentDate"></span>
+
+      <!-- LOGIN R4 di kanan atas -->
+      <div class="login-top">
+        <img src="user-icon.png" alt="User" class="login-icon">
+        <input id="r4Password" type="password" placeholder="Password R4">
+        <button id="loginBtn" class="btn small">Login</button>
+        <button id="logoutBtn" class="btn small" style="display:none;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">⚔️ LAPORAN DISTRIBUSI GOLD - OCTA FATE WAR</header>
+
+  <main class="main">
+
+    <!-- ===== TOOLS ===== -->
+    <section class="card tools">
+      <div class="left">
+        <button id="uploadBtn" class="btn primary" disabled>📤 Upload File</button>
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.docx" style="display:none">
+        <button id="deleteAll" class="btn warn" disabled>🗑️ Hapus Semua</button>
+        <button id="exportExcel" class="btn">📊 Export Excel</button>
+        <button id="exportCSV" class="btn">📄 Export CSV</button>
+      </div>
+
+      <div class="right">
+        <select id="eventFilter">
+          <option value="all">Semua Event</option>
+          <option>Cross Server</option>
+          <option>Jotun</option>
+          <option>Office</option>
+          <option>Tribal</option>
+          <option>GvG</option>
+        </select>
+        <input id="monthFilter" placeholder="Cari bulan (contoh: November 2025)">
+        <button id="applyFilter" class="btn">Filter</button>
+      </div>
+    </section>
+
+    <!-- ===== INPUT MANUAL R4 ===== -->
+    <section class="card" id="manualInputBox" style="display:none;">
+      <h3>📝 Tambah Data Manual (R4)</h3>
+      <div class="form-grid">
+        <input type="text" id="inputNama" placeholder="Nama Player" required>
+        <input type="number" id="inputGold" placeholder="Jumlah Gold" required>
+        <input type="text" id="inputPoint" placeholder="Poin (opsional)">
+        <input type="date" id="inputTanggal" required>
+        <select id="inputEvent">
+          <option value="Cross Server">Cross Server</option>
+          <option value="Jotun">Jotun</option>
+          <option value="Office">Office</option>
+        </select>
+        <button id="manualAddBtn" class="btn primary">Tambah Data</button>
+      </div>
+    </section>
+
+    <!-- ===== TABEL ===== -->
+    <section class="card table-card">
+      <table id="historyTable" class="tbl">
+        <thead><tr id="tableHeader"></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- ===== PREVIEW MODAL ===== -->
+  <div id="previewModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <h3>Preview Data</h3>
+      <p id="previewSummary"></p>
+      <div id="previewTableWrap" class="preview-wrap"></div>
+      <div class="modal-actions">
+        <button id="confirmSave" class="btn primary">Simpan (valid)</button>
+        <button id="cancelSave" class="btn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">© 2025 Octa Fate War Guild</footer>
+
+  <script src="finance.js"></script>
+</body>
+</html>
