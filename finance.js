@@ -1,4 +1,4 @@
-/* finance.js - FINAL FULL WORKING VERSION (Login, Delete, Filter, Export, Manual Input) */
+/* finance.js - FINAL FIXED VERSION (Login, Delete, Filter, Export, Manual Input, JSONBin FIXED) */
 
 // ===== CONFIG =====
 const R4_PASSWORD = "octaR4";
@@ -94,11 +94,16 @@ function formatNumberForDisplay(v){ if(v===null||v===undefined||v==="")return"-"
   return num.toLocaleString("id-ID"); }
 
 // ===== JSONBIN =====
-async function loadFromJSONBin(){
+async function loadFromJSONBin() {
   try {
-    const res = await fetch(`${API_URL}/latest`, { headers: {"X-Master-Key": API_KEY} });
+    const res = await fetch(`${API_URL}/latest`, { headers: { "X-Master-Key": API_KEY } });
     const json = await res.json();
-    const recs = json.record || [];
+
+    // ✅ FIX: Kompatibel untuk struktur JSONBin v3 (nested record)
+    const recs = Array.isArray(json.record)
+      ? json.record
+      : (json.record?.record || []);
+
     goldData = recs.map(r => {
       const d = tryParseDate(r.date) || new Date();
       return {
@@ -111,8 +116,9 @@ async function loadFromJSONBin(){
         minggu: r.minggu || extractWeekFromDate(d)
       };
     });
+
     renderTable();
-  } catch(err){
+  } catch (err) {
     console.error("❌ Load error:", err);
     tableBody.innerHTML = `<tr><td colspan="6">Gagal memuat data</td></tr>`;
   }
@@ -137,7 +143,7 @@ async function saveToJSONBin() {
         "X-Master-Key": API_KEY,
         "X-Bin-Versioning": "false"
       },
-      body: JSON.stringify({ record: payload }) // ✅ perbaikan utama
+      body: JSON.stringify({ record: payload })
     });
 
     if (!res.ok) throw new Error("Gagal update JSONBin");
@@ -290,8 +296,9 @@ manualAddBtn.addEventListener("click", async ()=>{
 
   goldData.push(newRec);
   await saveToJSONBin();
-  renderTable();
+  await loadFromJSONBin(); // ✅ auto refresh setelah simpan
   alert("✅ Data berhasil ditambahkan!");
+
   inputNama.value = "";
   inputGold.value = "";
   inputPoint.value = "";
