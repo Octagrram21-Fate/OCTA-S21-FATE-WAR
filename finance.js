@@ -1,4 +1,4 @@
-/* finance.js - final fixed full version with full delete */
+/* finance.js - FINAL FULL WORKING VERSION (Login, Delete, Filter, Export, Manual Input) */
 
 // ===== CONFIG =====
 const R4_PASSWORD = "octaR4";
@@ -9,11 +9,9 @@ const API_KEY = "$2a$10$MtQAS8YauDJ2XJS6jN5l1uKIV6OOXpkOIVGnwuULjrRjKuSJPyJry";
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 // ===== DOM =====
-const loginBox = document.getElementById("loginBox");
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const r4Password = document.getElementById("r4Password");
-const loginMessage = document.getElementById("loginMessage");
 
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
@@ -27,49 +25,78 @@ const applyFilter = document.getElementById("applyFilter");
 
 const tableHead = document.getElementById("tableHeader");
 const tableBody = document.querySelector("#historyTable tbody");
-
+const manualBox = document.getElementById("manualInputBox");
 document.getElementById("currentDate").textContent = new Date().toLocaleDateString("id-ID");
 
 // ===== STATE =====
 let goldData = [];
 
+// ===== LOGIN SYSTEM =====
+window.addEventListener("DOMContentLoaded", () => {
+  if (sessionStorage.getItem("isR4") === "true") {
+    isR4 = true;
+  }
+  updateLoginUI();
+  loadFromJSONBin();
+});
+
+loginBtn.addEventListener("click", () => {
+  if (r4Password.value.trim() === R4_PASSWORD) {
+    isR4 = true;
+    sessionStorage.setItem("isR4", "true");
+    alert("✅ Login berhasil sebagai R4");
+    updateLoginUI();
+    renderTable();
+  } else {
+    alert("❌ Password salah!");
+  }
+});
+
+logoutBtn.addEventListener("click", () => {
+  isR4 = false;
+  sessionStorage.removeItem("isR4");
+  alert("Anda telah logout.");
+  updateLoginUI();
+  renderTable();
+});
+
+function updateLoginUI() {
+  if (isR4) {
+    r4Password.style.display = "none";
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    uploadBtn.disabled = false;
+    deleteAll.disabled = false;
+    manualBox.style.display = "block";
+  } else {
+    r4Password.style.display = "inline-block";
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    uploadBtn.disabled = true;
+    deleteAll.disabled = true;
+    manualBox.style.display = "none";
+  }
+}
+
 // ===== UTIL =====
-function normalizeString(s){ if(s===null||s===undefined) return ""; return String(s).trim(); }
-function tryParseDate(val){
-  if(!val) return null;
-  const d = new Date(val);
-  if(!isNaN(d)) return d;
-  const m = String(val).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-  if(m){ let y=Number(m[3]); if(y<100) y+=2000; return new Date(y,Number(m[2])-1,Number(m[1])); }
-  return null;
+function normalizeString(s){ if(s===null||s===undefined)return""; return String(s).trim(); }
+function tryParseDate(val){ if(!val)return null; const d=new Date(val); if(!isNaN(d))return d;
+  const m=String(val).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  if(m){let y=Number(m[3]); if(y<100)y+=2000; return new Date(y,Number(m[2])-1,Number(m[1]));} return null;
 }
-function formatDateForDisplay(d){
-  if(!d) return "-";
-  if(!(d instanceof Date)) d = tryParseDate(d);
-  const pad=n=>n<10?"0"+n:n;
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-}
-function extractMonthNameFromDate(d){
-  const dt = tryParseDate(d); if(!dt) return "";
-  return dt.toLocaleString("id-ID",{month:"long", year:"numeric"});
-}
-function extractWeekFromDate(d){
-  const dt=tryParseDate(d); if(!dt) return "";
-  const day=dt.getDate();
-  return Math.ceil(day/7).toString();
-}
-function escapeHtml(s){ return s ? s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) : ""; }
-function formatNumberForDisplay(v){
-  if(v===null||v===undefined||v==="") return "-";
-  const num = Number(String(v).replace(/[^\d\-.,]/g,"").replace(",", "."));
-  if(isNaN(num)) return escapeHtml(v);
-  return num.toLocaleString("id-ID");
-}
+function formatDateForDisplay(d){ if(!d)return"-"; if(!(d instanceof Date))d=tryParseDate(d);
+  const pad=n=>n<10?"0"+n:n; return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function extractMonthNameFromDate(d){ const dt=tryParseDate(d); if(!dt)return""; return dt.toLocaleString("id-ID",{month:"long",year:"numeric"}); }
+function extractWeekFromDate(d){ const dt=tryParseDate(d); if(!dt)return""; return Math.ceil(dt.getDate()/7).toString(); }
+function escapeHtml(s){ return s?s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])):""; }
+function formatNumberForDisplay(v){ if(v===null||v===undefined||v==="")return"-";
+  const num=Number(String(v).replace(/[^\d\-.,]/g,"").replace(",", ".")); if(isNaN(num))return escapeHtml(v);
+  return num.toLocaleString("id-ID"); }
 
 // ===== JSONBIN =====
 async function loadFromJSONBin(){
   try {
-    const res = await fetch(`${API_URL}/latest`, { headers: {"X-Master-Key":API_KEY} });
+    const res = await fetch(`${API_URL}/latest`, { headers: {"X-Master-Key": API_KEY} });
     const json = await res.json();
     const recs = json.record || [];
     goldData = recs.map(r => {
@@ -94,8 +121,13 @@ async function loadFromJSONBin(){
 async function saveToJSONBin() {
   try {
     const payload = goldData.map(r => ({
-      name: r.name, gold: r.gold, point: r.point, date: r.date,
-      event: r.event, bulan: r.bulan, minggu: r.minggu
+      name: r.name,
+      gold: r.gold,
+      point: r.point,
+      date: r.date,
+      event: r.event,
+      bulan: r.bulan,
+      minggu: r.minggu
     }));
 
     const res = await fetch(API_URL, {
@@ -105,7 +137,7 @@ async function saveToJSONBin() {
         "X-Master-Key": API_KEY,
         "X-Bin-Versioning": "false"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ record: payload }) // ✅ perbaikan utama
     });
 
     if (!res.ok) throw new Error("Gagal update JSONBin");
@@ -115,7 +147,6 @@ async function saveToJSONBin() {
   }
 }
 
-// ===== fungsi khusus kosongkan BIN =====
 async function saveEmptyToJSONBin() {
   try {
     const res = await fetch(API_URL, {
@@ -125,10 +156,10 @@ async function saveEmptyToJSONBin() {
         "X-Master-Key": API_KEY,
         "X-Bin-Versioning": "false"
       },
-      body: JSON.stringify([]) // benar-benar array kosong
+      body: JSON.stringify({ record: [] })
     });
     if (!res.ok) throw new Error("Gagal hapus data di JSONBin");
-    console.log("✅ JSONBin sudah dikosongkan total");
+    console.log("✅ JSONBin dikosongkan");
   } catch (err) {
     console.error("❌ Error kosongkan BIN:", err);
     alert("Gagal menghapus semua data di server.");
@@ -183,40 +214,13 @@ function renderTable(filtered=null){
   }
 }
 
-// ===== LOGIN =====
-loginBtn.addEventListener("click", ()=>{
-  if(r4Password.value === R4_PASSWORD){
-    isR4 = true;
-    loginBox.style.display = "none";
-    uploadBtn.disabled = false;
-    deleteAll.disabled = false;
-    logoutBtn.style.display = "inline-block";
-    updateManualBox();
-    renderTable();
-    alert("✅ Login berhasil sebagai R4");
-  } else {
-    loginMessage.textContent = "Password salah!";
-    setTimeout(()=> loginMessage.textContent="",2500);
-  }
-});
-logoutBtn.addEventListener("click", ()=>{
-  isR4 = false;
-  loginBox.style.display = "";
-  r4Password.value = "";
-  uploadBtn.disabled = true;
-  deleteAll.disabled = true;
-  logoutBtn.style.display = "none";
-  updateManualBox();
-  renderTable();
-});
-
 // ===== DELETE ALL =====
 deleteAll.addEventListener("click", async ()=>{
   if(!isR4) return alert("Hanya R4 yang bisa hapus semua data.");
   if(confirm("⚠️ Yakin hapus semua data di tabel dan server?")){
     goldData = [];
     renderTable();
-    await saveEmptyToJSONBin(); // benar-benar kosong
+    await saveEmptyToJSONBin();
     alert("✅ Semua data telah dihapus total dari server JSONBin.");
   }
 });
@@ -239,6 +243,7 @@ exportExcel.addEventListener("click", ()=>{
   XLSX.utils.book_append_sheet(wb, ws, "GoldHistory");
   XLSX.writeFile(wb, "GoldHistory.xlsx");
 });
+
 exportCSV.addEventListener("click", ()=>{
   if(!goldData.length) return alert("Tidak ada data untuk diexport!");
   const ws = XLSX.utils.json_to_sheet(goldData);
@@ -251,7 +256,6 @@ exportCSV.addEventListener("click", ()=>{
 });
 
 // ===== INPUT MANUAL =====
-const manualBox = document.getElementById("manualInputBox");
 const inputNama = document.getElementById("inputNama");
 const inputGold = document.getElementById("inputGold");
 const inputPoint = document.getElementById("inputPoint");
@@ -259,12 +263,10 @@ const inputTanggal = document.getElementById("inputTanggal");
 const inputEvent = document.getElementById("inputEvent");
 const manualAddBtn = document.getElementById("manualAddBtn");
 
-function updateManualBox() {
-  manualBox.style.display = isR4 ? "block" : "none";
-}
 inputTanggal.value = new Date().toISOString().split("T")[0];
 
 manualAddBtn.addEventListener("click", async ()=>{
+  if(!isR4) return alert("Login dulu sebagai R4 untuk input data!");
   const nama = normalizeString(inputNama.value);
   const gold = normalizeString(inputGold.value);
   const point = normalizeString(inputPoint.value);
@@ -277,7 +279,9 @@ manualAddBtn.addEventListener("click", async ()=>{
   }
 
   const newRec = {
-    name: nama, gold: gold, point: point || "-",
+    name: nama,
+    gold: gold,
+    point: point || "-",
     date: formatDateForDisplay(tgl),
     event: event,
     bulan: extractMonthNameFromDate(tgl),
